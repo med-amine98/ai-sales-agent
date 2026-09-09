@@ -1,0 +1,12 @@
+Option 1 - Scraping interactif :
+
+bash
+python scrape_prospects.py
+Option 2 - Ajout en masse via API :
+
+bash
+python bulk_add_prospects.py
+Option 3 - Automatique complet :
+
+bash
+python auto_prospect.py

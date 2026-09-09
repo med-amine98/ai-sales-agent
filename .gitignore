@@ -1,0 +1,43 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+
+# Virtual environment
+venv/
+.venv/
+env/
+ENV/
+
+# Node
+node_modules/
+
+# Frontend build
+dist/
+build/
+.next/
+
+# Environment variables
+.env
+.env.*
+!.env.example
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+
+# Python cache/tools
+.pytest_cache/
+.mypy_cache/
+
+# Large media
+*.mp4
+*.mov
+*.avi
