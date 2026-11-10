@@ -963,7 +963,7 @@ const VirtualCall = () => {
             </div>
 
             <div className="relative w-full">
-              <VideoAgent videoSrc="/videos/agent.mp4" isSpeaking={isBotSpeaking} isListening={isListening} speakerName="Thomas - Conseiller" className="rounded-2xl" />
+              <VideoAgent videoSrc="/7706615-uhd_4096_2160_25fps.mp4" isSpeaking={isBotSpeaking} isListening={isListening} speakerName="Thomas - Conseiller" className="rounded-2xl" />
               {isBotSpeaking && (
                 <div className="absolute bottom-20 left-1/2 transform -translate-x-1/2">
                   <TypingIndicator />
@@ -996,7 +996,7 @@ const VirtualCall = () => {
                 )}
               </div>
 
-              <div className="bg-slate-950 text-white rounded-2xl p-4 flex-1 max-h-60 overflow-y-auto space-y-3 font-sans text-xs shadow-inner border border-slate-800">
+              <div className="bg-slate-950 text-white rounded-2xl p-4 flex-1 overflow-y-auto space-y-3 font-sans text-xs shadow-inner border border-slate-800">
                 {messages.length === 0 ? (
                   <div className="text-center py-10 text-slate-500">
                     {callActive ? (

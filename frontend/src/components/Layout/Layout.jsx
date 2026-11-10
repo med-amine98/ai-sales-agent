@@ -1,43 +1,45 @@
-import React, { useState, useEffect } from 'react'
-import { Link, useLocation } from 'react-router-dom'
-import { 
-  LayoutDashboard, 
-  Users, 
-  PhoneCall, 
+import React, { useState, useEffect } from 'react';
+import { Link, useLocation } from 'react-router-dom';
+import {
+  LayoutDashboard,
+  Users,
+  PhoneCall,
   BarChart3,
   Bot,
   Clock,
   Sparkles,
   ShieldCheck,
   Zap
-} from 'lucide-react'
-import { api } from '../../services/api'
+} from 'lucide-react';
+import { api } from '../../services/api';
+import VideoBackground from '../VideoBackground';
 
 const Layout = ({ children }) => {
-  const location = useLocation()
-  const [schedulerStatus, setSchedulerStatus] = useState(null)
+  const location = useLocation();
+  const [schedulerStatus, setSchedulerStatus] = useState(null);
 
   useEffect(() => {
-    loadSchedulerInfo()
-  }, [])
+    loadSchedulerInfo();
+  }, []);
 
   const loadSchedulerInfo = async () => {
     try {
-      const data = await api.getSchedulerStatus()
-      setSchedulerStatus(data)
+      const data = await api.getSchedulerStatus();
+      setSchedulerStatus(data);
     } catch (e) {
       // ignore
     }
-  }
-  
+  };
+
   const navigation = [
     { name: 'Dashboard', href: '/dashboard', icon: LayoutDashboard },
     { name: 'Prospects (Scraping)', href: '/prospects', icon: Users, badge: '60 Leads' },
     { name: 'Bot Vocal & Appels', href: '/calls', icon: PhoneCall, badge: 'IA Vocal' },
     { name: 'Analytics & KPIs', href: '/analytics', icon: BarChart3 },
-  ]
+  ];
 
-  return (
+  // Core layout markup (without VideoBackground wrapper)
+  const coreLayout = (
     <div className="min-h-screen bg-gradient-to-b from-slate-50 via-slate-50/50 to-indigo-50/20 text-slate-900 flex flex-col">
       {/* Top Banner Status Bar */}
       <div className="bg-slate-950 text-slate-300 text-2xs py-1.5 px-4 sm:px-8 border-b border-slate-800 flex justify-between items-center flex-wrap gap-2">
@@ -58,7 +60,6 @@ const Layout = ({ children }) => {
           </span>
         </div>
       </div>
-
       {/* Main Navigation Bar */}
       <header className="sticky top-0 z-40 bg-white/85 backdrop-blur-md border-b border-slate-200/80 shadow-xs">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -78,11 +79,10 @@ const Layout = ({ children }) => {
                 </div>
               </Link>
             </div>
-
             {/* Navigation Tabs */}
             <nav className="hidden md:flex items-center gap-1 bg-slate-100/80 p-1 rounded-xl border border-slate-200/60">
               {navigation.map((item) => {
-                const isActive = location.pathname === item.href || (item.href !== '/dashboard' && location.pathname.startsWith(item.href))
+                const isActive = location.pathname === item.href || (item.href !== '/dashboard' && location.pathname.startsWith(item.href));
                 return (
                   <Link
                     key={item.name}
@@ -103,14 +103,13 @@ const Layout = ({ children }) => {
                       </span>
                     )}
                   </Link>
-                )
+                );
               })}
             </nav>
-
             {/* Right Quick Action */}
             <div className="flex items-center gap-2">
-              <Link 
-                to="/prospects" 
+              <Link
+                to="/prospects"
                 className="hidden sm:inline-flex items-center gap-1.5 bg-gradient-to-r from-indigo-600 to-blue-600 hover:from-indigo-700 hover:to-blue-700 text-white px-3.5 py-2 rounded-xl text-xs font-bold shadow-md shadow-indigo-500/20 transition-all hover:shadow-lg"
               >
                 <Zap className="h-3.5 w-3.5" />
@@ -120,12 +119,10 @@ const Layout = ({ children }) => {
           </div>
         </div>
       </header>
-
       {/* Main Content Area */}
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex-1 w-full">
         {children}
       </main>
-
       {/* Footer */}
       <footer className="border-t border-slate-200 bg-white py-6 mt-12 text-center text-xs text-slate-500">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 flex flex-col sm:flex-row justify-between items-center gap-2">
@@ -140,7 +137,14 @@ const Layout = ({ children }) => {
         </div>
       </footer>
     </div>
-  )
-}
+  );
 
-export default Layout
+  // Render with or without video background based on route
+  return location.pathname === '/calls' ? (
+    <VideoBackground>{coreLayout}</VideoBackground>
+  ) : (
+    coreLayout
+  );
+};
+
+export default Layout;

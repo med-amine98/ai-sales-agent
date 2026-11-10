@@ -898,3 +898,50 @@ async def delete_call(
         await db.rollback()
         logger.error(f"Erreur lors de la suppression de l'appel: {e}")
         raise HTTPException(status_code=500, detail=f"Erreur serveur: {str(e)}")
+
+@router.post("/api/calls/start", response_model=CallResponse)
+async def start_real_call(request: Request, db: AsyncSession = Depends(get_db)):
+    """Start an outbound call via SignalWire.
+    Expects JSON body: {"to": "client_number", "from": "agent_number"}
+    """
+    data = await request.json()
+    to_number = data.get("to")
+    from_number = data.get("from")
+    if not to_number or not from_number:
+        raise HTTPException(status_code=400, detail="Both 'to' and 'from' numbers are required")
+    # Load SignalWire credentials from env (assumed already set)
+    project_id = os.getenv("SIGNALWIRE_PROJECT_ID")
+    api_token = os.getenv("SIGNALWIRE_API_TOKEN")
+    space = os.getenv("SIGNALWIRE_SPACE")
+    if not (project_id and api_token and space):
+        raise HTTPException(status_code=500, detail="SignalWire credentials not configured")
+    from signalwire.rest import Client as SignalWireClient
+    client = SignalWireClient(project_id, api_token, signalwire_space_url=space)
+    try:
+        call = client.calls.create(
+            url="https://example.com/twiml-voice",  # TwiML endpoint for the call flow
+            to=to_number,
+            from_=from_number,
+        )
+        # Record call in DB
+        new_call = Call(
+            prospect_id=None,
+            call_type="real",
+            duration=0,
+            transcript="",
+            sentiment="",
+            interest_level=0.0,
+            appointment_booked=False,
+            status="initiated",
+        )
+        db.add(new_call)
+        await db.commit()
+        return CallResponse(
+            id=new_call.id,
+            call_type=new_call.call_type,
+            status=new_call.status,
+            created_at=new_call.created_at,
+            duration=new_call.duration,
+        )
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
